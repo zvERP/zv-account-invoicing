@@ -27,8 +27,8 @@ class AccountMove(models.Model):
                     related_document = f'purchase.order,{purchase_order.id}'
                     continue
             elif self.env['ir.model']._get('contract.contract'):
-                contract = self.env['contract.contract'].search([('name', '=', record.invoice_origin)], limit=1)
+                contract = self.env['contract.contract'].name_search(name=record.invoice_origin, operator='=', limit=1)
                 if contract:
-                    related_document = f'contract.contract,{contract.id}'
+                    related_document = f'contract.contract,{contract[0][0]}'
 
         record.related_document = related_document
