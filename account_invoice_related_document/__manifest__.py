@@ -1,7 +1,7 @@
 # __manifest__.py
 {
     'name': 'Account Move Related document Link',
-    'version': '15.0.2',
+    'version': '16.0.2',
     'category': 'Accounting',
     'summary': 'Add a link from Account Move to Related Document',
     'author': 'zvERP',
