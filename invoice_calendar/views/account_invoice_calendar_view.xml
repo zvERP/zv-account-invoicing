@@ -1,0 +1,18 @@
+<odoo>
+    <record id="account.action_move_out_invoice_type" model="ir.actions.act_window">
+        <field name="view_mode">tree,calendar,kanban</field>
+        <field name="domain">[('move_type', '=', 'out_invoice')]</field>
+    </record>
+
+    <record id="view_account_invoice_calendar_tab" model="ir.ui.view">
+        <field name="name">account.move.calendar</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <calendar string="Invoice Due Dates" color="payment_state" date_start="invoice_date_due" create="false" mode="month">
+                <field name="invoice_date_due"/>
+                <field name="partner_id"/>
+                <field name="amount_residual"/>
+            </calendar>
+        </field>
+    </record>
+</odoo>
