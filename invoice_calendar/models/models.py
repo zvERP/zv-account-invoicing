@@ -18,7 +18,7 @@ class AccountMove(models.Model):
                     record.color_index = 1
             elif record.move_type == 'out_invoice':
                 if record.payment_state == 'paid':
-                    record.color_index = 8
+                    record.color_index = 10
                 else:
                     record.color_index = 2
             else:
