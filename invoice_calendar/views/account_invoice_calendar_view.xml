@@ -1,6 +1,6 @@
 <odoo>
     <record id="action_all_invoices_calendar" model="ir.actions.act_window">
-        <field name="name">invoice.calendar</field>
+        <field name="name">Invoice Calendar</field>
         <field name="res_model">account.move</field>
         <field name="view_mode">calendar</field>
         <field name="context">{}</field>
