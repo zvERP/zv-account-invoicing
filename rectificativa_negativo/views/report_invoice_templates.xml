@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+<record id="report_invoice_document_negativo" model="ir.ui.view">
+	<field name="name">report_invoice_document_negativo</field>
+	<field name="inherit_id" ref="account.report_invoice_document" />
+	<field name="arch" type="xml">
+
+        <xpath expr="//td[hasclass('o_price_total')]/span" position="before">
+        <span t-if="o.move_type in ['out_refund', 'in_refund']">-</span>
+        </xpath>
+
+	</field>
+</record>
+
+<record id="document_tax_totals_negativo" model="ir.ui.view">
+        <field name="name">document_tax_totals_negativo</field>
+        <field name="inherit_id" ref="account.document_tax_totals" />
+        <field name="arch" type="xml">
+
+	<xpath expr="//tr[hasclass('o_subtotal')]/td[hasclass('text-right')]/span" position="before">
+        <span t-if="o.move_type in ['out_refund', 'in_refund']">-</span>
+	</xpath>
+
+        <xpath expr="//tr[hasclass('o_total')]/td[hasclass('text-right')]/span" position="before">
+        <span t-if="o.move_type in ['out_refund', 'in_refund']">-</span>
+        </xpath>
+
+        </field>
+</record>
+
+
+
+<record id="tax_groups_totals_negativo" model="ir.ui.view">
+        <field name="name">tax_groups_totals_negativo</field>
+        <field name="inherit_id" ref="account.tax_groups_totals" />
+        <field name="arch" type="xml">
+
+    <xpath expr="//t[@t-name='account.tax_groups_totals']" position="replace">
+        <t t-name="account.tax_groups_totals">
+            <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
+                <tr>
+                    <t t-if="len(tax_totals['groups_by_subtotal'][subtotal_to_show]) &gt; 1 or (tax_totals['amount_untaxed'] != amount_by_group['tax_group_base_amount'])">
+                        <td>
+                            <span t-esc="amount_by_group['tax_group_name']"/>
+                            <span class="text-nowrap"> on
+                                <t t-esc="amount_by_group['formatted_tax_group_base_amount']"/>
+                            </span>
+                        </td>
+                        <td class="text-right o_price_total">
+                            <span t-if="o.move_type in ['out_refund', 'in_refund']">-</span>
+                            <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']"/>
+                        </td>
+                    </t>
+                    <t t-else="">
+                        <td><span class="text-nowrap" t-esc="amount_by_group['tax_group_name']"/></td>
+                        <td class="text-right o_price_total">
+                            <span t-if="o.move_type in ['out_refund', 'in_refund']">-</span>
+                            <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']"/>
+                        </td>
+                    </t>
+                </tr>
+            </t>
+        </t>
+    </xpath>
+
+        </field>
+</record>
+
+
+</odoo>
