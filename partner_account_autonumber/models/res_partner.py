@@ -20,18 +20,18 @@ class ResPartner(models.Model):
         ]
         last_account = Account.search(domain, order='code desc', limit=1)
 
-        if account_type == 'asset_receivable':
-            nombre = "Cliente"
-        else:
-            nombre = "Proveedor"
+        #if account_type == 'asset_receivable':
+        #    nombre = "Cliente"
+        #else:
+        #    nombre = "Proveedor"
 
-        if last_account:
+        if last_account and int(last_account.code) > 1000000:
             next_code = int(last_account.code) + 1
         else:
-            next_code = int(prefix + '001')
+            next_code = int(prefix + '0001')
 
         account = Account.create({
-            'name': f"{nombre} {partner_name} (euros)",
+            'name': f"{partner_name}",
             'code': str(next_code),
             'reconcile': True,
         })
@@ -40,11 +40,11 @@ class ResPartner(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals.get('is_company', False):
+        if not vals.get('parent_id'):
             partner_name = vals.get('name', 'Indefinido')
 
-            receivable_account = self._get_next_account('asset_receivable', '4300000', partner_name)
-            payable_account = self._get_next_account('liability_payable', '4000000', partner_name)
+            receivable_account = self._get_next_account('asset_receivable', '430000', partner_name)
+            payable_account = self._get_next_account('liability_payable', '400000', partner_name)
 
             vals['property_account_receivable_id'] = receivable_account.id
             vals['property_account_payable_id'] = payable_account.id
