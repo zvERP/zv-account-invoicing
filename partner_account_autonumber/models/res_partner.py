@@ -28,7 +28,7 @@ class ResPartner(models.Model):
         if last_account and int(last_account.code) > 1000000:
             next_code = int(last_account.code) + 1
         else:
-            next_code = int(prefix + '0001')
+            next_code = int(prefix + '001')
 
         account = Account.create({
             'name': f"{partner_name}",
