@@ -5,6 +5,7 @@
     'summary': 'Shows unpaid invoice due dates in the calendar.',
     'description': 'Display due dates of unpaid invoices in the calendar view.',
     'author': 'zvERP.com',
+    'website': 'https://www.zverp.com',
     'license': 'AGPL-3',
     'depends': ['account'],
     'data': [
