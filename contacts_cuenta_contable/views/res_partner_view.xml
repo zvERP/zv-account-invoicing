@@ -5,8 +5,8 @@
         <field name="inherit_id" ref="base.view_partner_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//tree" position="inside">
-                <field name="property_account_receivable_id" string="Account Receivable" />
-                <field name="property_account_payable_id" string="Account Payable" />
+                <field name="property_account_receivable_id" string="Account Receivable" optional="hide"/>
+                <field name="property_account_payable_id" string="Account Payable" optional="hide"/>
             </xpath>
         </field>
     </record>
