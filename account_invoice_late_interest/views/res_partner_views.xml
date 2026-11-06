@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_property_form_late_interest" model="ir.ui.view">
+        <field name="name">res.partner.form.late.interest</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='accounting']" position="inside">
+                <group string="Reclamación de intereses de demora" name="late_interest">
+                    <field name="late_interest_addressee" placeholder="AL EXCMO. CONCELLO DE ..."/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

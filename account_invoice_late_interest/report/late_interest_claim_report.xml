@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_late_interest_claim" model="ir.actions.report">
+        <field name="name">Reclamación de intereses de demora</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_invoice_late_interest.report_late_interest_claim</field>
+        <field name="report_file">account_invoice_late_interest.report_late_interest_claim</field>
+        <field name="print_report_name">object._get_late_interest_claim_filename()</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+        <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
+    </record>
+
+    <template id="report_late_interest_claim_document">
+        <t t-set="v" t-value="o._late_interest_claim_values()"/>
+        <t t-set="d" t-value="v['data']"/>
+        <t t-call="web.basic_layout">
+            <div class="page" style="font-family: Helvetica, Arial, sans-serif; font-size: 12pt; line-height: 1.45; text-align: justify;">
+                <t t-if="not d['applicable']">
+                    <p>La factura <t t-esc="o.name"/> no ha devengado intereses de demora.</p>
+                </t>
+                <t t-else="">
+                    <h4 style="font-size: 14pt; margin-bottom: 30px;" t-esc="v['addressee_heading']"/>
+
+                    <p>
+                        <t t-esc="v['representative_name']"/>, con DNI Nº <t t-esc="v['representative_vat']"/>, y
+                        domicilio, a efectos de notificaciones en <t t-esc="v['notification_address'].upper()"/>;
+                        actuando en nombre y representación de la mercantil
+                        <t t-esc="v['claimant_name'].upper()"/>, conforme establece
+                        el artículo 5 de la Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo Común
+                        de las Administraciones Públicas, y para lo cual se acompaña
+                        <t t-esc="v['representation_document']"/>, EXPONGO:
+                    </p>
+
+                    <p>
+                        <b>PRIMERO.-</b> En fecha <t t-esc="v['fmt_date'](o.invoice_date)"/> el abajo firmante emitió a
+                        <t t-esc="v['addressee_name'].upper()"/> la factura <t t-esc="o.name"/> por
+                        <t t-esc="v['contract_description']"/>, que ha consistido en los trabajos descritos en la
+                        factura.
+                    </p>
+
+                    <p>
+                        <b>SEGUNDO.-</b> El abajo firmante, en representación de la entidad
+                        <t t-esc="v['claimant_name'].upper()"/>, presentó la correspondiente factura a través del Punto
+                        General de Entrada de Facturas Electrónicas (FACe), en fecha
+                        <t t-esc="v['fmt_date'](v['registration_date'])"/>, tal y como se puede verificar con el
+                        justificante que se adjunta como Documento Nº1.
+                    </p>
+
+                    <p t-if="v['recognition_date']">
+                        Dicha factura cambió de estado, en fecha <t t-esc="v['fmt_date'](v['recognition_date'])"/>, al
+                        estado CONTABILIZADA LA OBLIGACIÓN RECONOCIDA. Se adjunta justificante notificado por correo
+                        electrónico, como Documento Nº2.
+                    </p>
+
+                    <p>
+                        <b>TERCERO.-</b> Que el apartado 4 del artículo 198 de la Ley 9/2017, de 8 de noviembre, de
+                        Contratos del Sector Público señala lo siguiente:
+                    </p>
+
+                    <p style="font-style: italic; margin-left: 30px; margin-right: 30px; font-size: 11pt;">
+                        «La Administración tendrá la obligación de abonar el precio dentro de los treinta días
+                        siguientes a la fecha de aprobación de las certificaciones de obra o de los documentos que
+                        acrediten la conformidad con lo dispuesto en el contrato de los bienes entregados o servicios
+                        prestados, sin perjuicio de lo establecido en el apartado 4 del artículo 210, y si se
+                        demorase, deberá abonar al contratista, a partir del cumplimiento de dicho plazo de treinta
+                        días los intereses de demora y la indemnización por los costes de cobro en los términos
+                        previstos en la Ley 3/2004, de 29 de diciembre, por la que se establecen medidas de lucha
+                        contra la morosidad en las operaciones comerciales. Para que haya lugar al inicio del cómputo
+                        de plazo para el devengo de intereses, el contratista deberá haber cumplido la obligación de
+                        presentar la factura ante el registro administrativo correspondiente en los términos
+                        establecidos en la normativa vigente sobre factura electrónica, en tiempo y forma, en el
+                        plazo de treinta días desde la fecha de entrega efectiva de las mercancías o la prestación
+                        del servicio.»
+                    </p>
+
+                    <p>
+                        <b>CUARTO.-</b> Que
+                        <t t-if="d['fully_paid']">transcurrieron <t t-esc="v['days_since_registration']"/> días desde
+                            la presentación de la factura anteriormente mencionada y el pago de la misma.</t>
+                        <t t-else="">han transcurrido <t t-esc="v['days_since_registration']"/> días desde la
+                            presentación de la factura anteriormente mencionada sin que se haya producido su pago
+                            completo.</t>
+                    </p>
+
+                    <p style="page-break-before: always;">
+                        <b>QUINTO.-</b> Los intereses de demora y la indemnización por costes de cobro ascienden a
+                        <t t-esc="v['fmt_amount'](d['total'])"/>, tomando como base
+                        <t t-esc="v['fmt_amount'](d['base'])"/>, importe total de la factura (IVA incluido),
+                        conforme a la siguiente liquidación:
+                    </p>
+
+                    <style>
+                        .o_late_interest_table { width: 100%; border-collapse: collapse; }
+                        .o_late_interest_table th, .o_late_interest_table td { padding: 3px 8px; border-bottom: 1px solid #ccc; }
+                        .o_late_interest_table .text-end { text-align: right; }
+                    </style>
+                    <table class="table table-sm o_late_interest_table" style="font-size: 10.5pt; margin: 10px 0 15px 0;">
+                        <thead>
+                            <tr>
+                                <th>Desde</th>
+                                <th>Hasta</th>
+                                <th class="text-end">Días</th>
+                                <th class="text-end">Base</th>
+                                <th class="text-end">Tipo anual</th>
+                                <th class="text-end">Intereses</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="d['segments']" t-as="seg">
+                                <td t-esc="v['fmt_date'](seg['date_from'])"/>
+                                <td t-esc="v['fmt_date'](seg['date_to'])"/>
+                                <td class="text-end" t-esc="seg['days']"/>
+                                <td class="text-end" t-esc="v['fmt_amount'](seg['base'])"/>
+                                <td class="text-end"><t t-esc="v['fmt_rate'](seg['rate'])"/> %</td>
+                                <td class="text-end" t-esc="v['fmt_amount'](seg['interest'])"/>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p style="margin-left: 10px;">
+                        Intereses: <t t-esc="v['fmt_amount'](d['interest'])"/>.<br/>
+                        Indemnización por costes de cobro (art. 8 Ley 3/2004):
+                        <t t-esc="v['fmt_amount'](d['compensation'])"/>.<br/>
+                        <b>Total: <t t-esc="v['fmt_amount'](d['total'])"/>.</b>
+                    </p>
+
+                    <p>
+                        Por todo lo anterior, y con amparo en lo dispuesto en el artículo 199 de la Ley 9/2017, de 8
+                        de noviembre, de Contratos del Sector Público, SOLICITO a <t t-esc="v['addressee_name'].upper()"/> que
+                        proceda a cumplir con su obligación de satisfacer los correspondientes intereses de demora
+                        desde el <t t-esc="v['fmt_date'](d['segments'][0]['date_from'])"/> hasta el
+                        <t t-esc="v['fmt_date'](d['end_date'])"/>,
+                        <t t-if="d['fully_paid']">fecha de su completo pago,</t>
+                        <t t-else="">fecha de cálculo, y en adelante hasta la fecha de su completo pago,</t>
+                        haciendo en este momento expresa indicación de que, tal y como señala el mencionado precepto,
+                        transcurrido un mes desde la presentación del presente escrito se entenderá reconocido el
+                        devengo de intereses y el abajo firmante podrá formular recurso contencioso-administrativo
+                        contra la inactividad de esta Administración, pudiendo solicitar como medida cautelar el pago
+                        inmediato de la deuda.
+                    </p>
+
+                    <p style="margin-top: 40px;">
+                        <t t-if="v['city']">En <t t-esc="v['city']"/>, a</t><t t-else="">A</t>
+                        <t t-esc="v['fmt_date'](v['claim_date'])"/>.
+                    </p>
+                    <p style="margin-top: 70px;">
+                        Fdo.: <t t-esc="v['representative_name']"/>
+                    </p>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_late_interest_claim">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="account_invoice_late_interest.report_late_interest_claim_document" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>
